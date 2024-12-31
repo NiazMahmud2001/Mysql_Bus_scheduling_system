@@ -1,0 +1,262 @@
+/*-------------------------   DDL  -------------------------*/
+drop database if exists RTA ; 
+CREATE DATABASE IF NOT EXISTS RTA;
+USE RTA ;
+
+CREATE TABLE IF NOT EXISTS BUS (
+	PlateNumber VARCHAR(20) NOT NULL,
+	SeatCapacity INT NOT NULL,
+	Make VARCHAR(45) NULL,
+	Model VARCHAR(45) NULL,
+	ModelYear INT NULL,
+	FuelType VARCHAR(45) NOT NULL,
+	PRIMARY KEY (PlateNumber)
+);
+
+CREATE TABLE IF NOT EXISTS ROUTE (
+	RouteID INT NOT NULL,
+	RouteName VARCHAR(55) NOT NULL,
+	PRIMARY KEY (RouteID),
+	UNIQUE (RouteName)
+);
+
+CREATE TABLE IF NOT EXISTS BUS_STOP (
+	Stop_Name VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Stop_Name) , 
+    UNIQUE (Stop_Name)
+);
+
+CREATE TABLE IF NOT EXISTS TERMINAL (
+	Ternimal_Name VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Ternimal_Name),
+    UNIQUE (Ternimal_Name),
+    FOREIGN KEY(Ternimal_Name) REFERENCES BUS_STOP(Stop_Name)  ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE IF NOT EXISTS STOPS_BETWEEN_TERMINAL(
+	Ternimal_Name VARCHAR(50) NOT NULL,
+    Stop_Name VARCHAR(50) NOT NULL,
+    PRIMARY KEY(Ternimal_Name , Stop_Name) , 
+    FOREIGN KEY(Ternimal_Name) REFERENCES TERMINAL(Ternimal_Name)  ON DELETE NO ACTION ON UPDATE NO ACTION ,  
+    FOREIGN KEY(Stop_Name) REFERENCES BUS_STOP(Stop_Name)  ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE IF NOT EXISTS LOCATED_AT(
+	Ternimal_Name VARCHAR(50) NOT NULL,
+    RouteID INT NOT NULL,
+    PRIMARY KEY(Ternimal_Name , RouteID) , 
+    FOREIGN KEY(Ternimal_Name) REFERENCES TERMINAL(Ternimal_Name)  ON DELETE NO ACTION ON UPDATE NO ACTION ,  
+    FOREIGN KEY(RouteID) REFERENCES ROUTE(RouteID)  ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE IF NOT EXISTS OPERATES_ON (
+	PlateNumber VARCHAR(50) NOT NULL,
+	RouteID INT NOT NULL,
+	PRIMARY KEY (PlateNumber, RouteID),
+    FOREIGN KEY (PlateNumber) REFERENCES BUS(PlateNumber) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (RouteID) REFERENCES ROUTE(RouteID) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE IF NOT EXISTS STOPS_AT (
+	StopName VARCHAR(50) NOT NULL,
+	RouteID INT NOT NULL,
+	PRIMARY KEY (StopName, RouteID),
+    FOREIGN KEY (StopName) REFERENCES BUS_STOP (Stop_Name) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (RouteID) REFERENCES ROUTE(RouteID) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+/*-------------------------   DML  -------------------------*/
+-- insert into BUS 
+INSERT INTO BUS VALUES('ABC123', 80, 'Mercedes', 'Double-decker', 2022, 'Electric') ; 
+INSERT INTO BUS VALUES('BCD234', 50, 'Ashok Leyland,', 'Sprinter', 2022, 'Petrol') ; 
+INSERT INTO BUS VALUES('CDE345', 55, 'Mercedes', 'standard bus', 2022, 'Diesel') ; 
+INSERT INTO BUS VALUES('DEF456', 50, 'Mercedes', 'Sprinter', 2022, 'Electric') ; 
+INSERT INTO BUS VALUES('EFG567', 75, 'VDL Bus & Coach', 'Double-decker', 2022, 'Diesel') ; 
+INSERT INTO BUS VALUES('FGH678', 70, 'Ashok Leyland', 'Articulated ', 2022, 'Electric') ; 
+INSERT INTO BUS VALUES('GHI789', 60, 'Mercedes', 'Metro link buses', 2022, 'Diesel') ; 
+INSERT INTO BUS VALUES('HIJ000', 45, 'Optare ', 'Metro link buses', 2022, 'Electric') ; 
+INSERT INTO BUS VALUES('IJK092', 90, 'Optare ', 'standard bus', 2022, 'Petrol') ; 
+INSERT INTO BUS VALUES('IpK092', 100, 'Mercedes', 'Double-decker', 2022, 'Electric') ; 
+INSERT INTO BUS VALUES('NMO345', 90, 'Ashok Leyland', 'Double-decker', 2022, 'Diesel') ;
+INSERT INTO BUS VALUES('MOP098', 100, 'Optare', 'Double-decker', 2022, 'Diesel') ;
+INSERT INTO BUS VALUES('OPQ879', 100, 'Optare', 'Double-decker', 2022, 'Diesel') ;
+INSERT INTO BUS VALUES('PQR211', 90, 'Optare', 'Double-decker', 2022, 'Electric') ;
+INSERT INTO BUS VALUES('QRS976', 100, 'Optare', 'Double-decker', 2022, 'Diesel') ;
+
+-- Insert into Route
+INSERT INTO ROUTE VALUES (1, 'Rolla-Sahara Center');
+INSERT INTO ROUTE VALUES (2, 'Rolla-Safari Mall');
+INSERT INTO ROUTE VALUES (3, 'Rolla-Sahara Mall');
+INSERT INTO ROUTE VALUES (4, 'Al Sharq-Sharjah Airport');
+INSERT INTO ROUTE VALUES (5, 'Rolla-Muwailah');
+INSERT INTO ROUTE VALUES (6, 'Rolla-Sharjah Airport');
+INSERT INTO ROUTE VALUES (7, "Muwailah-Al Sajaa");
+INSERT INTO ROUTE VALUES (8, "Rolla-Al Saja'a");
+INSERT INTO ROUTE VALUES (9, "Jubail-Sharjah Airport");
+INSERT INTO ROUTE VALUES (10, 'Al Sharq 3-Sharjah Airport');
+
+-- Insert into BUS_STOP
+INSERT INTO BUS_STOP VALUES ('Rolla'); 
+INSERT INTO BUS_STOP VALUES ('Sharhah College Bus Stop');
+INSERT INTO BUS_STOP VALUES ('Al Jubail'); 
+INSERT INTO BUS_STOP VALUES ('Sharjah City Center');
+INSERT INTO BUS_STOP VALUES ('Al Muwaulah');
+INSERT INTO BUS_STOP VALUES ('Rolla Square Park'); 
+INSERT INTO BUS_STOP VALUES ('Al Wahda Rd');
+INSERT INTO BUS_STOP VALUES ('Subway 1-2');
+INSERT INTO BUS_STOP VALUES ('King Faisal Rd'); 
+INSERT INTO BUS_STOP VALUES ('Route 6');
+INSERT INTO BUS_STOP VALUES ('Al Khan');
+INSERT INTO BUS_STOP VALUES ('Al Moski');
+INSERT INTO BUS_STOP VALUES ('Al Moski 2');
+INSERT INTO BUS_STOP VALUES ('Al Moski 3'); 
+INSERT INTO BUS_STOP VALUES ('Mamzar 9-2');
+INSERT INTO BUS_STOP VALUES ('Al Qasba 1');
+INSERT INTO BUS_STOP VALUES ('Shk. Sultan Bin Al Qasimi');
+INSERT INTO BUS_STOP VALUES ('Route 3'); 
+
+-- Insert into TERMINAL
+INSERT INTO TERMINAL VALUES ('Route 3');
+INSERT INTO TERMINAL VALUES ('Al Jubail');
+INSERT INTO TERMINAL VALUES ('Rolla');
+INSERT INTO TERMINAL VALUES ('Rolla Square Park');
+INSERT INTO TERMINAL VALUES ('King Faisal Rd');
+
+-- Insert into LOCATED_AT(terminal located at route)
+INSERT INTO LOCATED_AT VALUES ('Route 3' , 3);
+INSERT INTO LOCATED_AT VALUES ('Al Jubail' , 2);
+INSERT INTO LOCATED_AT VALUES ('Rolla' , 1);
+INSERT INTO LOCATED_AT VALUES ("Rolla Square Park" , 5);
+INSERT INTO LOCATED_AT VALUES ('King Faisal Rd' , 10);
+
+-- Insert into STOPS_BETWEEN_TERMINAL
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('King Faisal Rd', "Sharhah College Bus Stop");
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('King Faisal Rd', "Al Qasba 1");
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('King Faisal Rd', "Sharjah City Center");
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Al Jubail' , 'Al Muwaulah');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Al Jubail' , 'Al Wahda Rd');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Al Jubail' , 'Mamzar 9-2');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Rolla' , 'Subway 1-2');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Rolla' , 'Route 6');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Rolla' , 'Shk. Sultan Bin Al Qasimi');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Rolla Square Park' , 'Al Khan');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Rolla Square Park' , 'Al Moski');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Rolla Square Park' , 'Al Moski 2');
+INSERT INTO STOPS_BETWEEN_TERMINAL VALUES ('Rolla Square Park' , 'Al Moski 3');
+
+
+
+-- Insert into OPERATES_ON 
+INSERT INTO OPERATES_ON VALUES ('ABC123', 1);
+INSERT INTO OPERATES_ON VALUES ('IpK092', 1);
+INSERT INTO OPERATES_ON VALUES ('BCD234', 2);
+INSERT INTO OPERATES_ON VALUES ('CDE345', 3);
+INSERT INTO OPERATES_ON VALUES ('EFG567', 3);
+INSERT INTO OPERATES_ON VALUES ('FGH678', 4);
+INSERT INTO OPERATES_ON VALUES ('DEF456', 4);
+INSERT INTO OPERATES_ON VALUES ('GHI789', 5);
+INSERT INTO OPERATES_ON VALUES ('HIJ000', 6);
+INSERT INTO OPERATES_ON VALUES ('IJK092', 7);
+INSERT INTO OPERATES_ON VALUES ('QRS976', 7);
+INSERT INTO OPERATES_ON VALUES ('NMO345', 8);
+INSERT INTO OPERATES_ON VALUES ('MOP098', 9);
+INSERT INTO OPERATES_ON VALUES ('OPQ879', 10);
+INSERT INTO OPERATES_ON VALUES ('PQR211', 10);
+
+-- Insert into STOPS_AT
+INSERT INTO STOPS_AT VALUES ('Rolla' , 1);
+INSERT INTO STOPS_AT VALUES ("Rolla Square Park" , 5);
+INSERT INTO STOPS_AT VALUES ('Sharjah City Center' , 1);
+INSERT INTO STOPS_AT VALUES ('Al Jubail' , 2);
+INSERT INTO STOPS_AT VALUES ('Sharjah City Center' , 3);
+INSERT INTO STOPS_AT VALUES ('Route 3' , 3);
+INSERT INTO STOPS_AT VALUES ('Al Muwaulah' , 4);
+INSERT INTO STOPS_AT VALUES ('Sharhah College Bus Stop' , 5);
+INSERT INTO STOPS_AT VALUES ('Sharhah College Bus Stop' , 3);
+INSERT INTO STOPS_AT VALUES ('Al Wahda Rd', 5);
+INSERT INTO STOPS_AT VALUES ('Al Khan' , 6);
+INSERT INTO STOPS_AT VALUES ('Al Moski' , 6);
+INSERT INTO STOPS_AT VALUES ('Mamzar 9-2' , 7);
+INSERT INTO STOPS_AT VALUES ('Al Qasba 1' , 8);
+INSERT INTO STOPS_AT VALUES ('Shk. Sultan Bin Al Qasimi' , 9);
+INSERT INTO STOPS_AT VALUES ('King Faisal Rd' , 10);
+INSERT INTO STOPS_AT VALUES ('King Faisal Rd' , 7);
+INSERT INTO STOPS_AT VALUES ('Mamzar 9-2' , 10);
+
+
+
+/* query 1*/ 
+/*CREATE VIEW Temp_max(Max_val)
+AS SELECT MAX(StopCount) AS TR
+FROM (
+	SELECT RouteName, COUNT(StopName) AS StopCount
+	FROM Route
+	JOIN STOPS_AT ON ROUTE.RouteID = STOPS_AT.RouteID
+	GROUP BY RouteName
+) AS StopCounts;
+ 
+CREATE VIEW Temp_test(RouteName1 , StopCount)
+AS SELECT RouteName, COUNT(StopName) AS StopCount
+	FROM Route
+	JOIN STOPS_AT ON ROUTE.RouteID = STOPS_AT.RouteID
+	GROUP BY RouteName
+; 
+SELECT RouteName1 
+FROM Temp_test , Temp_max 
+WHERE Temp_test.StopCount = Temp_max.Max_val ; 
+
+DROP VIEW Temp_max ;
+DROP VIEW Temp_test ; 
+*/
+CREATE VIEW Temp_test(Count_Route , RouteID)
+AS SELECT COUNT(RouteID) , RouteID
+FROM STOPS_AT
+GROUP BY RouteID;
+
+SELECT Count_Route , RouteID
+FROM Temp_test 
+HAVING Count_Route IN (
+	SELECT MAX(Count_Route) 
+	FROM Temp_test
+);
+ 
+DROP VIEW Temp_test ;
+
+/*query 2*/
+CREATE VIEW ElectricBuses AS
+SELECT RouteID
+FROM OPERATES_ON
+JOIN BUS ON OPERATES_ON.PlateNumber = BUS.PlateNumber
+WHERE BUS.FuelType = 'Electric';
+
+SELECT RouteName
+FROM ROUTE
+WHERE RouteID IN (SELECT RouteID FROM ElectricBuses);
+DROP VIEW ElectricBuses ; 
+
+
+
+
+/*query 3*/
+SELECT COUNT(StopName) AS Count_Stop , StopName
+FROM STOPS_AT
+GROUP BY StopName 
+HAVING Count_Stop>=2; 
+
+
+/*query 4*/
+SELECT SUM(SeatCapacity) AS Total_Capacity , FuelType
+FROM BUS
+GROUP BY FuelType ; 
+
+/*query 5*/
+SELECT Stop_Name AS Not_Used_Route
+FROM BUS_STOP 
+WHERE BUS_STOP.Stop_Name NOT IN (
+	SELECT Stop_Name
+    FROM BUS_STOP , STOPS_AT
+    WHERE BUS_STOP.Stop_Name = STOPS_AT.StopName
+)
+
+
+
